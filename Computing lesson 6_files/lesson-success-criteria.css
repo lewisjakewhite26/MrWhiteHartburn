@@ -1,0 +1,35 @@
+/* Slide 6 — success criteria checklist */
+
+[data-slide='4'] .hl6-criteria-item {
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+[data-slide='4'] .hl6-criteria-item[data-checked='0'] {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+[data-slide='4'] .hl6-criteria-item[data-checked='0'] .hl6-criteria-icon {
+  color: rgba(255, 255, 255, 0.35);
+  stroke: rgba(255, 255, 255, 0.35);
+}
+
+[data-slide='4'] .hl6-criteria-item[data-checked='1'] {
+  border-color: rgba(0, 122, 255, 0.45) !important;
+  background: rgba(0, 122, 255, 0.1) !important;
+}
+
+[data-slide='4'] .hl6-criteria-item[data-checked='1'] .hl6-criteria-icon {
+  color: #007aff;
+  stroke: #007aff;
+}
+
+[data-slide='4'] .hl6-criteria-item[data-checked='1'] .font-mono.text-sm.font-semibold {
+  color: #fff;
+}
+
+[data-slide='4'] .hl6-criteria-item[data-checked='0'] .font-mono.text-sm.font-semibold {
+  color: rgba(255, 255, 255, 0.75);
+}

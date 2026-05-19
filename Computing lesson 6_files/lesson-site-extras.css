@@ -1,0 +1,289 @@
+/* Hartburn Year 4 lesson — teacher timers + injected content */
+#hl6-timer-bar {
+  position: fixed;
+  right: 1.5rem;
+  top: 5.25rem;
+  z-index: 55;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(18, 18, 18, 0.88);
+  backdrop-filter: blur(12px);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.55);
+  pointer-events: auto;
+}
+
+#hl6-timer-bar[data-phase='teach'] #hl6-timer-phase {
+  color: #007aff;
+}
+#hl6-timer-bar[data-phase='share'] #hl6-timer-phase {
+  color: #ff9500;
+}
+#hl6-timer-bar[data-warning='1'] #hl6-timer-display {
+  color: #ff9500;
+}
+
+#hl6-timer-display {
+  min-width: 2.75rem;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+}
+
+#hl6-timer-bar button {
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.75);
+  border-radius: 0.25rem;
+  padding: 0.15rem 0.35rem;
+  font: inherit;
+  font-size: 9px;
+  line-height: 1.2;
+}
+#hl6-timer-bar button:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.hl6-inject {
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.hl6-rot-banner {
+  margin: 0 auto 1rem;
+  max-width: 36rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(0, 122, 255, 0.35);
+  background: rgba(0, 122, 255, 0.08);
+  text-align: center;
+}
+
+.hl6-rot-banner h3 {
+  margin: 0 0 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #007aff;
+}
+
+.hl6-rot-banner p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.hl6-grid-demo {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.hl6-grid-svg {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.hl6-toolkit-note {
+  margin: -0.5rem auto 1.5rem;
+  max-width: 42rem;
+  padding: 0.6rem 1rem;
+  border-radius: 0.5rem;
+  border-left: 3px solid #007aff;
+  background: rgba(0, 122, 255, 0.06);
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.75);
+  text-align: center;
+}
+
+.hl6-criteria-tiers {
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.hl6-tier {
+  padding: 0.65rem 0.85rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.hl6-tier strong {
+  display: block;
+  margin-bottom: 0.2rem;
+  font-family: ui-monospace, monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #007aff;
+}
+
+.hl6-tier[data-tier='most'] strong {
+  color: #007aff;
+}
+.hl6-tier[data-tier='some'] strong {
+  color: #ff9500;
+}
+
+/* Click-to-Reveal Portrait Cards */
+.hl6-portrait-thumbnail {
+  transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.hl6-portrait-thumbnail:hover {
+  transform: translateY(-6px) scale(1.02);
+  border-color: rgba(0, 122, 255, 0.4);
+  box-shadow: 0 12px 30px rgba(0, 122, 255, 0.15);
+}
+
+/* Portrait modal — simple, text-first for interactive whiteboard */
+.hl6-portrait-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  box-sizing: border-box;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.hl6-portrait-modal.hl6-modal-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.hl6-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  cursor: pointer;
+}
+
+.hl6-modal-panel {
+  position: relative;
+  z-index: 1;
+  width: min(96vw, 1100px);
+  max-height: 92vh;
+  overflow-y: auto;
+  background: #141414;
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1.25rem;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
+}
+
+.hl6-modal-close-btn {
+  position: absolute;
+  top: clamp(0.75rem, 2vw, 1rem);
+  right: clamp(0.75rem, 2vw, 1rem);
+  z-index: 2;
+  padding: 0.65rem 1.5rem;
+  font-family: ui-monospace, monospace;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.hl6-modal-close-btn:hover {
+  background: rgba(0, 122, 255, 0.35);
+  border-color: #007aff;
+}
+
+.hl6-modal-top {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(1rem, 3vw, 1.75rem);
+  margin-bottom: clamp(1rem, 2.5vw, 1.75rem);
+  padding-right: 6rem;
+}
+
+.hl6-modal-thumb {
+  width: clamp(72px, 12vw, 120px);
+  height: auto;
+  max-height: clamp(90px, 14vw, 140px);
+  object-fit: cover;
+  border-radius: 0.5rem;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  flex-shrink: 0;
+}
+
+.hl6-modal-subtitle {
+  margin: 0 0 0.35rem;
+  font-family: ui-monospace, monospace;
+  font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.hl6-modal-title {
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: clamp(2rem, 4.5vw, 3.25rem);
+  font-weight: 800;
+  line-height: 1.1;
+  color: #fff;
+}
+
+.hl6-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 2.5vw, 1.5rem);
+}
+
+.hl6-modal-section {
+  padding: clamp(0.85rem, 2vw, 1.25rem);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 0.75rem;
+  border-left: 5px solid #007aff;
+}
+
+.hl6-modal-section-label {
+  margin: 0 0 0.5rem;
+  font-family: ui-monospace, monospace;
+  font-size: clamp(1rem, 1.8vw, 1.35rem);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.hl6-modal-section-text {
+  margin: 0;
+  font-size: clamp(1.35rem, 2.8vw, 2rem);
+  font-weight: 500;
+  line-height: 1.45;
+  color: #fff;
+}

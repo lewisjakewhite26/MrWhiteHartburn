@@ -1,0 +1,27 @@
+/* Editing Lab — before/after compare (slide 5) */
+
+[data-slide='3'] .aspect-\[16\/10\] input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+
+[data-slide='3'] .aspect-\[16\/10\] input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 44px;
+  height: 44px;
+  cursor: ew-resize;
+}
+
+[data-slide='3'] .aspect-\[16\/10\] .absolute.top-0.h-full[style*='left'] {
+  transition: left 0.05s linear;
+  pointer-events: none;
+}
+
+[data-slide='3'] .aspect-\[16\/10\] [style*='clip-path'] {
+  transition: clip-path 0.05s linear;
+}
+
+[data-slide='3'] .aspect-\[16\/10\] .absolute.top-0.h-full[style*='left'] > div > div:last-child {
+  cursor: ew-resize;
+}

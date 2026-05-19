@@ -1,0 +1,66 @@
+/* Slide 1 — hero layout, no photo background */
+
+[data-slide='0'] section .hl6-hero-bg,
+[data-slide='0'] section .absolute.inset-0.bg-cover {
+  background-image: none !important;
+  background-color: #0c0e12;
+  position: absolute;
+  inset: 0;
+}
+
+[data-slide='0'] section .hl6-hero-bg::before,
+[data-slide='0'] section .absolute.inset-0.bg-cover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 90% 55% at 50% 0%, rgba(0, 122, 255, 0.14) 0%, transparent 58%),
+    radial-gradient(ellipse 70% 45% at 80% 100%, rgba(255, 149, 0, 0.06) 0%, transparent 50%),
+    linear-gradient(180deg, #141a24 0%, #121212 45%, #0a0a0a 100%);
+  pointer-events: none;
+}
+
+[data-slide='0'] section > .absolute.inset-0.bg-cover > .bg-gradient-to-b {
+  position: relative;
+  z-index: 1;
+  background: transparent !important;
+}
+
+[data-slide='0'] section > .relative.z-10.flex.h-full {
+  justify-content: flex-start !important;
+  padding-top: clamp(5.5rem, 16vh, 10rem);
+  padding-bottom: 3rem;
+}
+
+[data-slide='0'] .hl6-rot-banner {
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+/* School logo — top-right chrome only (not on hero title) */
+.hl6-school-logo-badge {
+  line-height: 0;
+  flex-shrink: 0;
+  padding: 0.15rem 0;
+}
+
+.hl6-school-logo-img {
+  display: block;
+  height: 2rem;
+  width: auto;
+  max-width: min(200px, 36vw);
+  object-fit: contain;
+  object-position: right center;
+  /* Black plate blends away; grey type + white stag → all white on dark chrome */
+  mix-blend-mode: screen;
+  filter: grayscale(1) brightness(6) contrast(1.08);
+}
+
+@media (min-width: 768px) {
+  .hl6-school-logo-img {
+    height: 2.35rem;
+    max-width: 240px;
+  }
+}
+
