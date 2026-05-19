@@ -89,9 +89,9 @@
     wrap.className = 'hl6-inject hl6-criteria-tiers';
     wrap.setAttribute('data-hl6', 'criteria');
     wrap.innerHTML =
-      '<div class="hl6-tier" data-tier="all"><strong>All pupils</strong> I can take one portrait where my subject\'s eyes sit in the top third of the frame.</div>' +
-      '<div class="hl6-tier" data-tier="most"><strong>Most pupils</strong> I can take three portraits using different styles and explain my compositional choices.</div>' +
-      '<div class="hl6-tier" data-tier="some"><strong>Some pupils</strong> I can select my best portrait, edit it to change the mood, and explain what I changed and why.</div>';
+      '<div class="hl6-tier" data-tier="all">I can take one portrait where my subject\'s eyes sit in the top third of the frame.</div>' +
+      '<div class="hl6-tier" data-tier="most">I can take three portraits using different styles and explain my compositional choices.</div>' +
+      '<div class="hl6-tier" data-tier="some">I can select my best portrait, edit it to change the mood, and explain what I changed and why.</div>';
     var headingBlock = container.querySelector('.mb-16.text-center');
     if (headingBlock && headingBlock.nextElementSibling) {
       container.insertBefore(wrap, headingBlock.nextElementSibling);
@@ -535,5 +535,351 @@
     });
   } else {
     tryInit(60);
+  }
+})();
+
+(function () {
+  var TOTAL_SEC = 30 * 60;
+  var SLIDE_TARGETS = ['By 03:00', 'By 08:00', 'By 22:00', '', 'By 30:00'];
+
+  var elapsed = 0;
+  var running = false;
+  var tickId = null;
+  var lastSlide = -1;
+
+  function getTrack() {
+    return (
+      document.getElementById('lesson-slide-track') ||
+      (function () {
+        var first = document.querySelector('[data-slide="0"]');
+        return first ? first.parentElement : null;
+      })()
+    );
+  }
+
+  function readSlideIndex() {
+    var track = getTrack();
+    if (!track) return 0;
+    var style = track.getAttribute('style') || '';
+    var m = /translateX\(\s*-?(\d+(?:\.\d+)?)%\s*\)/i.exec(style);
+    if (m) return Math.round(parseFloat(m[1]) / 100);
+    return 0;
+  }
+
+  function formatTime(sec) {
+    var m = Math.floor(sec / 60);
+    var s = sec % 60;
+    return m + ':' + (s < 10 ? '0' : '') + s;
+  }
+
+  function render() {
+    var root = document.getElementById('hl6-global-timer');
+    if (!root) return;
+    var disp = document.getElementById('hl6-global-timer-display');
+    var target = document.getElementById('hl6-global-timer-target');
+    if (disp) disp.textContent = formatTime(elapsed);
+    root.setAttribute('data-running', running ? '1' : '0');
+    if (target) {
+      var idx = readSlideIndex();
+      var label = SLIDE_TARGETS[idx] != null ? SLIDE_TARGETS[idx] : '';
+      target.textContent = label;
+    }
+  }
+
+  function pause() {
+    running = false;
+    if (tickId) {
+      clearInterval(tickId);
+      tickId = null;
+    }
+    render();
+  }
+
+  function start() {
+    if (elapsed >= TOTAL_SEC) return;
+    running = true;
+    if (tickId) clearInterval(tickId);
+    tickId = setInterval(function () {
+      if (elapsed < TOTAL_SEC) {
+        elapsed++;
+        render();
+      }
+      if (elapsed >= TOTAL_SEC) pause();
+    }, 1000);
+    render();
+  }
+
+  function toggle() {
+    if (running) pause();
+    else start();
+  }
+
+  function reset() {
+    pause();
+    elapsed = 0;
+    render();
+  }
+
+  function syncSlideLabel() {
+    var idx = readSlideIndex();
+    if (idx === lastSlide) return;
+    lastSlide = idx;
+    render();
+  }
+
+  function mount() {
+    if (document.getElementById('hl6-global-timer')) return true;
+
+    var root = document.createElement('div');
+    root.id = 'hl6-global-timer';
+    root.setAttribute('data-running', '0');
+    root.innerHTML =
+      '<button type="button" id="hl6-global-timer-face" aria-label="Start or pause lesson timer">' +
+      '<span id="hl6-global-timer-display">0:00</span>' +
+      '<span id="hl6-global-timer-target"></span>' +
+      '</button>' +
+      '<button type="button" id="hl6-global-timer-reset" aria-label="Reset lesson timer to zero">↺</button>';
+
+    document.body.appendChild(root);
+
+    root.querySelector('#hl6-global-timer-face').addEventListener('click', function (e) {
+      e.preventDefault();
+      toggle();
+    });
+
+    root.querySelector('#hl6-global-timer-reset').addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      reset();
+    });
+
+    render();
+    return true;
+  }
+
+  function watchSlides() {
+    function loop() {
+      syncSlideLabel();
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+  }
+
+  function tryBoot(n) {
+    if (!getTrack()) {
+      if (n <= 0) return;
+      setTimeout(function () {
+        tryBoot(n - 1);
+      }, 100);
+      return;
+    }
+    if (mount()) watchSlides();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () {
+      tryBoot(80);
+    });
+  } else {
+    tryBoot(80);
+  }
+})();
+
+(function () {
+  function gridSvg() {
+    return (
+      '<svg class="hl6-grid-svg" viewBox="0 0 100 100" aria-hidden="true">' +
+      '<rect width="100" height="100" fill="rgba(255,255,255,0.04)"/>' +
+      '<line x1="33.3" y1="0" x2="33.3" y2="100" stroke="rgba(0,122,255,0.55)" stroke-width="1"/>' +
+      '<line x1="66.6" y1="0" x2="66.6" y2="100" stroke="rgba(0,122,255,0.55)" stroke-width="1"/>' +
+      '<line x1="0" y1="33.3" x2="100" y2="33.3" stroke="rgba(0,122,255,0.55)" stroke-width="1"/>' +
+      '<line x1="0" y1="66.6" x2="100" y2="66.6" stroke="rgba(0,122,255,0.55)" stroke-width="1"/>' +
+      '<circle cx="66.6" cy="33.3" r="4" fill="#007AFF" opacity="0.9"/>' +
+      '</svg>'
+    );
+  }
+
+  function setupTagline(panel) {
+    var inner = panel.querySelector('.relative.z-10');
+    if (!inner) return;
+    var paras = inner.querySelectorAll('p');
+    for (var i = 0; i < paras.length; i++) {
+      var el = paras[i];
+      if (el.classList.contains('hl6-hero-tagline')) continue;
+      var text = el.textContent || '';
+      if (text.indexOf('Learn how to take great portrait') === -1) continue;
+      el.classList.add('hl6-hero-tagline');
+      el.setAttribute('role', 'button');
+      el.setAttribute('tabindex', '0');
+      el.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var on = el.getAttribute('data-glow') === '1';
+        el.setAttribute('data-glow', on ? '0' : '1');
+      });
+      el.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          var on = el.getAttribute('data-glow') === '1';
+          el.setAttribute('data-glow', on ? '0' : '1');
+        }
+      });
+      break;
+    }
+  }
+
+  function setupRotModal(panel) {
+    if (document.getElementById('hl6-rot-modal')) return;
+    var banner = panel.querySelector('.hl6-rot-banner');
+    if (!banner || banner.classList.contains('hl6-rot-banner-trigger')) return;
+
+    var modal = document.createElement('div');
+    modal.id = 'hl6-rot-modal';
+    modal.className = 'hl6-rot-modal';
+    modal.setAttribute('aria-hidden', 'true');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-labelledby', 'hl6-rot-modal-title');
+    modal.innerHTML =
+      '<div class="hl6-rot-modal-backdrop" data-hl6-rot-close="1"></div>' +
+      '<div class="hl6-rot-modal-panel">' +
+      '<button type="button" class="hl6-rot-modal-close" aria-label="Close">Close</button>' +
+      '<h3 id="hl6-rot-modal-title">Learning focus — Rule of Thirds</h3>' +
+      '<p>Divide the frame into a 3×3 grid. Place your subject\'s <strong>eyes on the top horizontal line</strong> — that gives balanced headroom and a clear focal point.</p>' +
+      '<div class="hl6-grid-demo">' +
+      gridSvg() +
+      '<p class="hl6-rot-modal-note">Blue dot = where eyes often sit in a strong portrait.</p>' +
+      '</div></div>';
+
+    document.body.appendChild(modal);
+
+    var trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = banner.className + ' hl6-rot-banner-trigger';
+    trigger.setAttribute('data-hl6', 'hero-rot');
+    trigger.setAttribute('aria-haspopup', 'dialog');
+    trigger.setAttribute('aria-controls', 'hl6-rot-modal');
+    trigger.innerHTML = '<h3>Learning focus — Rule of Thirds</h3>';
+    banner.parentNode.replaceChild(trigger, banner);
+
+    function openRotModal() {
+      modal.classList.add('hl6-rot-modal-open');
+      modal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeRotModal() {
+      modal.classList.remove('hl6-rot-modal-open');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+
+    trigger.addEventListener('click', function (e) {
+      e.stopPropagation();
+      openRotModal();
+    });
+
+    var closeBtn = modal.querySelector('.hl6-rot-modal-close');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeRotModal();
+      });
+    }
+
+    var backdrop = modal.querySelector('[data-hl6-rot-close]');
+    if (backdrop) {
+      backdrop.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeRotModal();
+      });
+    }
+
+    document.addEventListener('click', function (e) {
+      if (!modal.classList.contains('hl6-rot-modal-open')) return;
+      if (!e.target.closest('.hl6-rot-modal-panel')) closeRotModal();
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && modal.classList.contains('hl6-rot-modal-open')) {
+        e.preventDefault();
+        closeRotModal();
+      }
+    });
+  }
+
+  function tryBoot(n) {
+    var panel = document.querySelector('[data-slide="0"]');
+    if (!panel || !panel.querySelector('.hl6-rot-banner')) {
+      if (n <= 0) return;
+      setTimeout(function () {
+        tryBoot(n - 1);
+      }, 100);
+      return;
+    }
+    setupTagline(panel);
+    setupRotModal(panel);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () {
+      tryBoot(80);
+    });
+  } else {
+    tryBoot(80);
+  }
+})();
+
+(function () {
+  function syncNameSize() {
+    var img = document.querySelector('#hl6-brand-cluster .hl6-school-logo-img');
+    var name = document.getElementById('hl6-teacher-name');
+    if (!img || !name) return;
+    var h = img.getBoundingClientRect().height;
+    if (!h) h = 40;
+    name.style.fontSize = Math.round(h * 0.58) + 'px';
+  }
+
+  function setupBrandCluster() {
+    if (document.getElementById('hl6-brand-cluster')) return true;
+    var logo = document.querySelector('.hl6-school-logo-badge');
+    if (!logo) return false;
+
+    var cluster = document.createElement('div');
+    cluster.id = 'hl6-brand-cluster';
+
+    var name = document.createElement('span');
+    name.id = 'hl6-teacher-name';
+    name.textContent = 'Mr. White';
+
+    document.body.appendChild(cluster);
+    cluster.appendChild(logo);
+    cluster.appendChild(name);
+
+    syncNameSize();
+    return true;
+  }
+
+  function tryBoot(n) {
+    if (!setupBrandCluster()) {
+      if (n <= 0) return;
+      setTimeout(function () {
+        tryBoot(n - 1);
+      }, 100);
+      return;
+    }
+    window.addEventListener('resize', syncNameSize);
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(syncNameSize);
+    }
+    var img = document.querySelector('#hl6-brand-cluster .hl6-school-logo-img');
+    if (img && !img.complete) {
+      img.addEventListener('load', syncNameSize);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () {
+      tryBoot(80);
+    });
+  } else {
+    tryBoot(80);
   }
 })();

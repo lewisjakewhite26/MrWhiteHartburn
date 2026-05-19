@@ -81,6 +81,151 @@
   color: rgba(255, 255, 255, 0.85);
 }
 
+.hl6-hero-tagline {
+  cursor: pointer;
+  transition:
+    color 0.3s ease,
+    text-shadow 0.3s ease,
+    box-shadow 0.3s ease,
+    background 0.3s ease;
+  border-radius: 0.5rem;
+  padding: 0.4rem 0.85rem;
+  margin-left: -0.85rem;
+  margin-right: -0.85rem;
+}
+
+.hl6-hero-tagline[data-glow='1'] {
+  color: #fff;
+  background: rgba(0, 122, 255, 0.22);
+  box-shadow:
+    0 0 16px rgba(0, 122, 255, 0.7),
+    0 0 40px rgba(0, 122, 255, 0.45),
+    0 0 72px rgba(0, 122, 255, 0.25),
+    inset 0 0 28px rgba(0, 122, 255, 0.15);
+  text-shadow:
+    0 0 8px rgba(255, 255, 255, 1),
+    0 0 22px rgba(0, 122, 255, 0.95),
+    0 0 44px rgba(0, 122, 255, 0.65),
+    0 0 64px rgba(0, 122, 255, 0.35);
+}
+
+.hl6-rot-banner-trigger {
+  display: block;
+  width: 100%;
+  cursor: pointer;
+  font: inherit;
+  text-align: center;
+  transition: box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.hl6-rot-banner-trigger:hover {
+  border-color: rgba(0, 122, 255, 0.45);
+  box-shadow: 0 0 20px rgba(0, 122, 255, 0.1);
+}
+
+.hl6-rot-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  box-sizing: border-box;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.hl6-rot-modal.hl6-rot-modal-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.hl6-rot-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.82);
+  cursor: pointer;
+}
+
+.hl6-rot-modal-panel {
+  position: relative;
+  z-index: 1;
+  width: min(96vw, 52rem);
+  max-height: 92vh;
+  overflow-y: auto;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  padding-top: clamp(2rem, 4vw, 3rem);
+  border-radius: 1rem;
+  border: 2px solid rgba(0, 122, 255, 0.4);
+  background: rgba(14, 14, 14, 0.98);
+  text-align: center;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.65);
+}
+
+.hl6-rot-modal-panel h3 {
+  margin: 0 0 clamp(0.75rem, 2vw, 1.25rem);
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #007aff;
+}
+
+.hl6-rot-modal-panel > p {
+  margin: 0;
+  font-size: clamp(1.35rem, 2.8vw, 2rem);
+  font-weight: 500;
+  line-height: 1.45;
+  color: #fff;
+}
+
+.hl6-rot-modal-panel .hl6-grid-demo {
+  margin-top: clamp(1rem, 2.5vw, 1.75rem);
+  gap: clamp(1rem, 3vw, 2rem);
+}
+
+.hl6-rot-modal-panel .hl6-grid-svg {
+  width: clamp(100px, 16vw, 140px);
+  height: clamp(100px, 16vw, 140px);
+}
+
+.hl6-rot-modal-note {
+  margin: 0;
+  font-size: clamp(1.05rem, 2vw, 1.35rem);
+  max-width: none;
+  flex: 1;
+  min-width: min(100%, 20rem);
+  text-align: left;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.hl6-rot-modal-close {
+  position: absolute;
+  top: clamp(0.75rem, 2vw, 1rem);
+  right: clamp(0.75rem, 2vw, 1rem);
+  padding: 0.65rem 1.5rem;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-family: ui-monospace, monospace;
+  font-size: clamp(0.9rem, 1.6vw, 1.15rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.hl6-rot-modal-close:hover {
+  border-color: rgba(0, 122, 255, 0.4);
+  color: #fff;
+}
+
 .hl6-grid-demo {
   display: flex;
   justify-content: center;
@@ -286,4 +431,85 @@
   font-weight: 500;
   line-height: 1.45;
   color: #fff;
+}
+
+/* ——— Global lesson countdown (hl6-global-timer) ——— */
+#hl6-timer-bar {
+  display: none !important;
+}
+
+#hl6-global-timer {
+  position: fixed;
+  right: 1.5rem;
+  top: 5.25rem;
+  z-index: 56;
+  display: flex;
+  align-items: stretch;
+  gap: 0.25rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  pointer-events: auto;
+  opacity: 0.72;
+}
+
+#hl6-global-timer:hover {
+  opacity: 0.95;
+}
+
+#hl6-global-timer-face {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.1rem;
+  padding: 0.3rem 0.45rem;
+  border-radius: 0.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(12, 12, 12, 0.55);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  color: inherit;
+  text-align: right;
+  min-width: 4.25rem;
+}
+
+#hl6-global-timer-face:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(18, 18, 18, 0.65);
+}
+
+#hl6-global-timer-display {
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.1;
+}
+
+#hl6-global-timer-target {
+  font-size: 0.55rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.32);
+}
+
+#hl6-global-timer-target:empty {
+  display: none;
+}
+
+#hl6-global-timer-reset {
+  align-self: center;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.35);
+  border-radius: 0.25rem;
+  padding: 0.2rem 0.3rem;
+  font: inherit;
+  font-size: 0.65rem;
+  line-height: 1;
+}
+
+#hl6-global-timer-reset:hover {
+  color: rgba(255, 255, 255, 0.55);
+  border-color: rgba(255, 255, 255, 0.12);
 }
