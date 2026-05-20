@@ -302,7 +302,8 @@
   }
 
   function bindEvents() {
-    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('pointermove', onPointerMove, { passive: true });
+    document.addEventListener('mousemove', onPointerMove, { passive: true });
     startBtn.addEventListener('click', function (e) {
       e.preventDefault();
       startLesson();
@@ -315,9 +316,17 @@
     });
   }
 
-  function onMouseMove(e) {
+  function moveCursorDot(clientX, clientY) {
     if (!cursorDot || !document.documentElement.classList.contains('hl6-landing-active')) return;
-    cursorDot.style.transform = 'translate(' + e.clientX + 'px, ' + e.clientY + 'px)';
+    var size = cursorDot.classList.contains('is-over-link') ? 14 : 8;
+    var half = size / 2;
+    cursorDot.style.left = (clientX - half) + 'px';
+    cursorDot.style.top = (clientY - half) + 'px';
+    cursorDot.classList.add('is-visible');
+  }
+
+  function onPointerMove(e) {
+    moveCursorDot(e.clientX, e.clientY);
   }
 
   function shouldSkipLanding() {

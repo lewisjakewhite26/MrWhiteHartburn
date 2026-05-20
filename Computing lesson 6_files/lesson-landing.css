@@ -9,9 +9,9 @@ html.hl6-landing-active #hl6-timer-bar {
   pointer-events: none !important;
 }
 
-html.hl6-landing-active,
-html.hl6-landing-active body {
-  cursor: none;
+/* Keep the normal system cursor visible in Chrome/Edge; blue dot is decorative only */
+html.hl6-landing-active #hl6-landing {
+  cursor: default;
 }
 
 #hl6-landing {
@@ -311,7 +311,7 @@ html.hl6-landing-active body {
   background: none;
   border: none;
   padding: 0;
-  cursor: none;
+  cursor: pointer;
   transition: color 0.35s ease, letter-spacing 0.35s ease;
 }
 
@@ -369,22 +369,28 @@ html.hl6-landing-active body {
 
 #hl6-landing-cursor {
   position: fixed;
+  left: 0;
+  top: 0;
   width: 8px;
   height: 8px;
-  margin: -4px 0 0 -4px;
+  margin: 0;
   border-radius: 50%;
   background: #007aff;
   box-shadow: 0 0 12px rgba(0, 122, 255, 0.9);
   pointer-events: none;
   z-index: 200001;
-  transform: translate(-100px, -100px);
-  transition: transform 0.08s ease-out, width 0.2s ease, height 0.2s ease, margin 0.2s ease, opacity 0.4s ease;
+  opacity: 0;
+  will-change: left, top, width, height;
+  transition: width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
+}
+
+#hl6-landing-cursor.is-visible {
+  opacity: 1;
 }
 
 #hl6-landing-cursor.is-over-link {
   width: 14px;
   height: 14px;
-  margin: -7px 0 0 -7px;
 }
 
 html:not(.hl6-landing-active) #hl6-landing,
