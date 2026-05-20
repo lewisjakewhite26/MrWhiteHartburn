@@ -147,38 +147,11 @@ html.hl6-landing-active #hl6-landing {
   filter: drop-shadow(0 0 6px rgba(0, 122, 255, 0.85)) drop-shadow(0 0 14px rgba(0, 122, 255, 0.45));
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1.05s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #hl6-landing .hl6-landing-grid-line.is-drawn {
   stroke-dashoffset: 0;
-  transition: stroke-dashoffset 1.05s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-#hl6-landing .hl6-landing-grid-line.is-live {
-  stroke-dasharray: 0.14 0.09;
-  stroke-dashoffset: 0;
-  animation: hl6LandingGridFlow linear infinite;
-}
-
-#hl6-landing .hl6-landing-grid-line.is-live#hl6-landing-line-h1 {
-  animation-duration: 2.3s;
-}
-#hl6-landing .hl6-landing-grid-line.is-live#hl6-landing-line-h2 {
-  animation-duration: 2.7s;
-  animation-direction: reverse;
-}
-#hl6-landing .hl6-landing-grid-line.is-live#hl6-landing-line-v1 {
-  animation-duration: 3.1s;
-}
-#hl6-landing .hl6-landing-grid-line.is-live#hl6-landing-line-v2 {
-  animation-duration: 2.5s;
-  animation-direction: reverse;
-}
-
-@keyframes hl6LandingGridFlow {
-  to {
-    stroke-dashoffset: -1;
-  }
 }
 
 #hl6-landing .hl6-landing-dots {

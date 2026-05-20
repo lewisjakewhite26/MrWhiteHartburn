@@ -29,7 +29,8 @@
   var slideEls = [];
   var displayTimer = null;
   var gridTimers = [];
-  var gridReady = false;
+  var gridLoopActive = false;
+  var gridDotsShown = false;
   var destroyed = false;
 
   function rand(min, max) {
@@ -127,32 +128,45 @@
     gridTimers = [];
   }
 
-  function startGridLiveMotion() {
-    LINE_IDS.forEach(function (id, i) {
+  function resetGridLines() {
+    LINE_IDS.forEach(function (id) {
       var line = document.getElementById(id);
-      if (!line) return;
-      line.classList.add('is-live');
-      line.style.animationDuration = (2.2 + i * 0.35) + 's';
+      if (line) line.classList.remove('is-drawn');
     });
-    DOT_IDS.forEach(function (id) {
-      var dot = document.getElementById(id);
-      if (dot) dot.classList.add('is-visible');
-    });
-    gridReady = true;
   }
 
-  function initPersistentGrid() {
-    if (destroyed || gridReady) return;
+  function showGridDots() {
+    if (gridDotsShown) return;
+    gridDotsShown = true;
+    DOT_IDS.forEach(function (id, i) {
+      gridTimers.push(setTimeout(function () {
+        if (!gridLoopActive) return;
+        var dot = document.getElementById(id);
+        if (dot) dot.classList.add('is-visible');
+      }, i * 100));
+    });
+  }
+
+  function runGridDrawLoop() {
+    if (destroyed || !gridLoopActive) return;
+    clearGridTimers();
+    gridLoopActive = true;
+    resetGridLines();
+
     var step = 0;
     function nextLine() {
-      if (destroyed || gridReady) return;
+      if (destroyed || !gridLoopActive) return;
       if (step >= LINE_IDS.length) {
-        startGridLiveMotion();
+        showGridDots();
+        gridTimers.push(setTimeout(function () {
+          if (destroyed || !gridLoopActive) return;
+          runGridDrawLoop();
+        }, randInt(1400, 2400)));
         return;
       }
-      var delay = step === 0 ? 350 : randInt(500, 1200);
+      var delay = step === 0 ? 1000 : randInt(500, 1200);
       gridTimers.push(setTimeout(function () {
-        if (destroyed || gridReady) return;
+        if (destroyed || !gridLoopActive) return;
         var line = document.getElementById(LINE_IDS[step]);
         if (line) line.classList.add('is-drawn');
         step += 1;
@@ -160,6 +174,12 @@
       }, delay));
     }
     nextLine();
+  }
+
+  function initPersistentGrid() {
+    if (destroyed || gridLoopActive) return;
+    gridLoopActive = true;
+    runGridDrawLoop();
   }
 
   function applyKenBurns(slide) {
@@ -206,6 +226,7 @@
 
   function stopSlideshow() {
     destroyed = true;
+    gridLoopActive = false;
     if (displayTimer) {
       clearTimeout(displayTimer);
       displayTimer = null;
