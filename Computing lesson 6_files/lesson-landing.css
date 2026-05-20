@@ -1,0 +1,393 @@
+/* Intro landing overlay — scoped to #hl6-landing */
+
+html.hl6-landing-active #lesson-dial-root,
+html.hl6-landing-active #hl6-brand-cluster,
+html.hl6-landing-active #hl6-global-timer,
+html.hl6-landing-active #hl6-timer-bar {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+html.hl6-landing-active,
+html.hl6-landing-active body {
+  cursor: none;
+}
+
+#hl6-landing {
+  position: fixed;
+  inset: 0;
+  z-index: 200000;
+  overflow: hidden;
+  background: #0a0a0a;
+  font-family: 'Bebas Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  opacity: 1;
+  transition: opacity 1.1s ease;
+}
+
+#hl6-landing.is-exiting {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#hl6-landing .hl6-landing-slides {
+  position: absolute;
+  inset: 0;
+}
+
+#hl6-landing .hl6-landing-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 2.5s ease-in-out;
+  pointer-events: none;
+  z-index: 1;
+}
+
+#hl6-landing .hl6-landing-slide.is-active {
+  opacity: 1;
+  z-index: 2;
+}
+
+#hl6-landing .hl6-landing-slide img {
+  position: absolute;
+  inset: -6%;
+  width: 112%;
+  height: 112%;
+  object-fit: cover;
+  filter: brightness(0.55);
+  will-change: transform;
+}
+
+#hl6-landing .hl6-landing-slide img.kb-a { animation: hl6LandingKbA linear infinite; }
+#hl6-landing .hl6-landing-slide img.kb-b { animation: hl6LandingKbB linear infinite; }
+#hl6-landing .hl6-landing-slide img.kb-c { animation: hl6LandingKbC linear infinite; }
+#hl6-landing .hl6-landing-slide img.kb-d { animation: hl6LandingKbD linear infinite; }
+
+@keyframes hl6LandingKbA {
+  from { transform: scale(1) translate(0, 0); }
+  to   { transform: scale(1.12) translate(-2%, -1.5%); }
+}
+@keyframes hl6LandingKbB {
+  from { transform: scale(1.08) translate(1%, 0); }
+  to   { transform: scale(1) translate(-1.5%, 2%); }
+}
+@keyframes hl6LandingKbC {
+  from { transform: scale(1) translate(-1%, 1%); }
+  to   { transform: scale(1.14) translate(2%, -2%); }
+}
+@keyframes hl6LandingKbD {
+  from { transform: scale(1.1) translate(2%, -1%); }
+  to   { transform: scale(1.02) translate(-2%, 1.5%); }
+}
+
+#hl6-landing .hl6-landing-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.85s ease;
+}
+
+#hl6-landing .hl6-landing-grid.is-hidden {
+  opacity: 0;
+}
+
+#hl6-landing .hl6-landing-grid-svg {
+  width: 100%;
+  height: 100%;
+}
+
+#hl6-landing .hl6-landing-grid-line {
+  stroke: #007aff;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 6px rgba(0, 122, 255, 0.85)) drop-shadow(0 0 14px rgba(0, 122, 255, 0.45));
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+#hl6-landing .hl6-landing-grid-line.is-drawn {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1.05s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#hl6-landing .hl6-landing-dots {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+#hl6-landing .hl6-landing-ix {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  opacity: 0;
+  transform: scale(0);
+}
+
+#hl6-landing .hl6-landing-ix.is-visible {
+  opacity: 1;
+  transform: scale(1);
+  transition: transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease;
+}
+
+#hl6-landing .hl6-landing-ix::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: #007aff;
+  box-shadow: 0 0 10px rgba(0, 122, 255, 0.95), 0 0 20px rgba(0, 122, 255, 0.5);
+}
+
+#hl6-landing .hl6-landing-ix::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 122, 255, 0.85);
+  animation: hl6LandingDotPulse 2.4s ease-out infinite;
+}
+
+@keyframes hl6LandingDotPulse {
+  0%   { transform: scale(1); opacity: 0.9; }
+  100% { transform: scale(3.8); opacity: 0; }
+}
+
+#hl6-landing .hl6-landing-ix--tl { left: 33.333%; top: 33.333%; }
+#hl6-landing .hl6-landing-ix--tr { left: 66.666%; top: 33.333%; }
+#hl6-landing .hl6-landing-ix--bl { left: 33.333%; top: 66.666%; }
+#hl6-landing .hl6-landing-ix--br { left: 66.666%; top: 66.666%; }
+
+#hl6-landing .hl6-landing-corners {
+  position: absolute;
+  inset: 0;
+  z-index: 15;
+  pointer-events: none;
+  opacity: 0;
+  animation: hl6LandingCornersIn 1.4s ease 0.6s forwards;
+}
+
+@keyframes hl6LandingCornersIn {
+  to { opacity: 1; }
+}
+
+#hl6-landing .hl6-landing-corner {
+  position: absolute;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-color: rgba(0, 122, 255, 0.75);
+  border-style: solid;
+  filter: drop-shadow(0 0 8px rgba(0, 122, 255, 0.5));
+}
+
+#hl6-landing .hl6-landing-corner--tl { top: 1.25rem; left: 1.25rem; border-width: 2px 0 0 2px; }
+#hl6-landing .hl6-landing-corner--tr { top: 1.25rem; right: 1.25rem; border-width: 2px 2px 0 0; }
+#hl6-landing .hl6-landing-corner--bl { bottom: 1.25rem; left: 1.25rem; border-width: 0 0 2px 2px; }
+#hl6-landing .hl6-landing-corner--br { bottom: 1.25rem; right: 1.25rem; border-width: 0 2px 2px 0; }
+
+#hl6-landing .hl6-landing-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 35%, rgba(0, 0, 0, 0.55) 72%, rgba(0, 0, 0, 0.88) 100%);
+}
+
+#hl6-landing .hl6-landing-grain {
+  position: absolute;
+  inset: -50%;
+  z-index: 21;
+  pointer-events: none;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: hl6LandingGrain 0.5s steps(2) infinite;
+}
+
+@keyframes hl6LandingGrain {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-2%, -1%); }
+}
+
+#hl6-landing .hl6-landing-brand-top {
+  position: absolute;
+  top: clamp(1.25rem, 3vh, 2rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  opacity: 0;
+  animation: hl6LandingFadeBrand 1.2s ease 0.4s forwards;
+  white-space: nowrap;
+}
+
+@keyframes hl6LandingFadeBrand {
+  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+#hl6-landing .hl6-landing-school {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(0.65rem, 1.1vw, 0.85rem);
+  letter-spacing: 0.35em;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+#hl6-landing .hl6-landing-divider {
+  width: 1px;
+  height: 1.1em;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+#hl6-landing .hl6-landing-mr {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-size: clamp(0.95rem, 1.6vw, 1.15rem);
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+#hl6-landing .hl6-landing-copy {
+  position: absolute;
+  bottom: clamp(4.5rem, 12vh, 7rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  text-align: center;
+  width: min(92vw, 56rem);
+  opacity: 0;
+  animation: hl6LandingFadeCopy 1.4s ease 0.7s forwards;
+}
+
+@keyframes hl6LandingFadeCopy {
+  from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+#hl6-landing .hl6-landing-label {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+  letter-spacing: 0.45em;
+  color: #007aff;
+  margin-bottom: 0.5rem;
+}
+
+#hl6-landing .hl6-landing-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.8rem, 8vw, 5.5rem);
+  letter-spacing: 0.06em;
+  line-height: 0.95;
+  color: #fff;
+  text-shadow: 0 4px 40px rgba(0, 0, 0, 0.6);
+}
+
+#hl6-landing .hl6-landing-sub {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-size: clamp(1.1rem, 2.2vw, 1.65rem);
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 0.35rem;
+}
+
+#hl6-landing .hl6-landing-start {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.35rem;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(0.65rem, 1vw, 0.8rem);
+  letter-spacing: 0.42em;
+  color: rgba(255, 255, 255, 0.4);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: none;
+  transition: color 0.35s ease, letter-spacing 0.35s ease;
+}
+
+#hl6-landing .hl6-landing-start:hover {
+  color: #fff;
+  letter-spacing: 0.48em;
+}
+
+#hl6-landing .hl6-landing-start svg {
+  width: 0.65em;
+  height: 0.65em;
+  transition: transform 0.35s ease;
+}
+
+#hl6-landing .hl6-landing-start:hover svg {
+  transform: translateX(4px);
+}
+
+#hl6-landing .hl6-landing-progress {
+  position: absolute;
+  bottom: clamp(1.5rem, 4vh, 2.25rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  display: flex;
+  gap: 0.55rem;
+  align-items: center;
+}
+
+#hl6-landing .hl6-landing-progress-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  transition: background 0.4s ease, width 0.4s ease, height 0.4s ease;
+}
+
+#hl6-landing .hl6-landing-progress-dot.is-active {
+  width: 9px;
+  height: 9px;
+  background: #007aff;
+  box-shadow: 0 0 12px rgba(0, 122, 255, 0.7);
+}
+
+#hl6-landing .hl6-landing-counter {
+  position: absolute;
+  bottom: clamp(1.5rem, 4vh, 2.25rem);
+  right: clamp(1.25rem, 3vw, 2rem);
+  z-index: 30;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(0.75rem, 1.1vw, 0.95rem);
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+#hl6-landing-cursor {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 50%;
+  background: #007aff;
+  box-shadow: 0 0 12px rgba(0, 122, 255, 0.9);
+  pointer-events: none;
+  z-index: 200001;
+  transform: translate(-100px, -100px);
+  transition: transform 0.08s ease-out, width 0.2s ease, height 0.2s ease, margin 0.2s ease, opacity 0.4s ease;
+}
+
+#hl6-landing-cursor.is-over-link {
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+}
+
+html:not(.hl6-landing-active) #hl6-landing,
+html:not(.hl6-landing-active) #hl6-landing-cursor {
+  display: none;
+}
