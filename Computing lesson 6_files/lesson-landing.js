@@ -58,7 +58,7 @@
     root.setAttribute('role', 'dialog');
     root.setAttribute('aria-label', 'Lesson introduction');
     root.innerHTML =
-      '<motion.div class="hl6-landing-slides" id="hl6-landing-slides" aria-hidden="true"></div>' +
+      '<div class="hl6-landing-slides" id="hl6-landing-slides" aria-hidden="true"></div>' +
       '<div class="hl6-landing-grid is-hidden" id="hl6-landing-grid">' +
       '<svg class="hl6-landing-grid-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">' +
       '<line class="hl6-landing-grid-line" id="hl6-landing-line-h1" x1="0" y1="33.333" x2="100" y2="33.333" pathLength="1"/>' +
@@ -66,26 +66,22 @@
       '<line class="hl6-landing-grid-line" id="hl6-landing-line-v1" x1="33.333" y1="0" x2="33.333" y2="100" pathLength="1"/>' +
       '<line class="hl6-landing-grid-line" id="hl6-landing-line-v2" x1="66.666" y1="0" x2="66.666" y2="100" pathLength="1"/>' +
       '</svg>' +
-      '<motion.div class="hl6-landing-dots" aria-hidden="true">' +
+      '<div class="hl6-landing-dots" aria-hidden="true">' +
       '<span class="hl6-landing-ix hl6-landing-ix--tl" id="hl6-landing-dot-tl"></span>' +
       '<span class="hl6-landing-ix hl6-landing-ix--tr" id="hl6-landing-dot-tr"></span>' +
       '<span class="hl6-landing-ix hl6-landing-ix--bl" id="hl6-landing-dot-bl"></span>' +
       '<span class="hl6-landing-ix hl6-landing-ix--br" id="hl6-landing-dot-br"></span>' +
-      '</motion.div></motion.div>' +
-      '<motion.div class="hl6-landing-corners" aria-hidden="true">' +
+      '</div></div>' +
+      '<div class="hl6-landing-corners" aria-hidden="true">' +
       '<span class="hl6-landing-corner hl6-landing-corner--tl"></span>' +
       '<span class="hl6-landing-corner hl6-landing-corner--tr"></span>' +
       '<span class="hl6-landing-corner hl6-landing-corner--bl"></span>' +
       '<span class="hl6-landing-corner hl6-landing-corner--br"></span>' +
-      '</motion.div>' +
-      '<div class="hl6-landing-vignette" aria-hidden="true"></motion.div>' +
-      '<div class="hl6-landing-grain" aria-hidden="true"></motion.div>' +
+      '</div>' +
       '<button type="button" class="hl6-landing-start" id="hl6-landing-start">' +
-      'START LESSON' +
+      'ENTER LESSON' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>' +
       '</button>';
-
-    root.innerHTML = root.innerHTML.split('motion.div').join('div');
 
     cursorDot = document.createElement('div');
     cursorDot.id = 'hl6-landing-cursor';
