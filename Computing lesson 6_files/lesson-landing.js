@@ -131,7 +131,9 @@
   function resetGridLines() {
     LINE_IDS.forEach(function (id) {
       var line = document.getElementById(id);
-      if (line) line.classList.remove('is-drawn');
+      if (!line) return;
+      line.classList.remove('is-drawn');
+      line.style.transitionDuration = '';
     });
   }
 
@@ -153,22 +155,30 @@
     gridLoopActive = true;
     resetGridLines();
 
+    var sequence = shuffle(LINE_IDS.slice());
     var step = 0;
+
     function nextLine() {
       if (destroyed || !gridLoopActive) return;
-      if (step >= LINE_IDS.length) {
+      if (step >= sequence.length) {
         showGridDots();
         gridTimers.push(setTimeout(function () {
           if (destroyed || !gridLoopActive) return;
           runGridDrawLoop();
-        }, randInt(1400, 2400)));
+        }, randInt(1200, 3200)));
         return;
       }
-      var delay = step === 0 ? 1000 : randInt(500, 1200);
+      var delay = step === 0 ? randInt(650, 1500) : randInt(380, 1450);
       gridTimers.push(setTimeout(function () {
         if (destroyed || !gridLoopActive) return;
-        var line = document.getElementById(LINE_IDS[step]);
-        if (line) line.classList.add('is-drawn');
+        var line = document.getElementById(sequence[step]);
+        if (line) {
+          line.style.transitionDuration = rand(0.7, 1.4).toFixed(2) + 's';
+          line.style.transitionTimingFunction = Math.random() > 0.45
+            ? 'cubic-bezier(0.4, 0, 0.2, 1)'
+            : 'cubic-bezier(0.22, 0.85, 0.32, 1)';
+          line.classList.add('is-drawn');
+        }
         step += 1;
         nextLine();
       }, delay));
