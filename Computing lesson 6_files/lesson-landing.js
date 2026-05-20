@@ -15,15 +15,12 @@
   var KB_CLASSES = ['kb-a', 'kb-b', 'kb-c', 'kb-d'];
   var LINE_IDS = ['hl6-landing-line-h1', 'hl6-landing-line-h2', 'hl6-landing-line-v1', 'hl6-landing-line-v2'];
   var DOT_IDS = ['hl6-landing-dot-tl', 'hl6-landing-dot-tr', 'hl6-landing-dot-bl', 'hl6-landing-dot-br'];
-  var GRID_FADE_MS = 850;
-  var CROSSFADE_MS = 2500;
   var EXIT_MS = 1100;
 
   var root;
   var chromeEl;
   var slidesEl;
   var gridLayer;
-  var cursorDot;
   var startBtn;
   var fullscreenBtn;
 
@@ -32,7 +29,7 @@
   var slideEls = [];
   var displayTimer = null;
   var gridTimers = [];
-  var busy = false;
+  var gridReady = false;
   var destroyed = false;
 
   function rand(min, max) {
@@ -61,7 +58,7 @@
     root.setAttribute('aria-label', 'Lesson introduction');
     root.innerHTML =
       '<div class="hl6-landing-slides" id="hl6-landing-slides" aria-hidden="true"></div>' +
-      '<div class="hl6-landing-grid is-hidden" id="hl6-landing-grid">' +
+      '<div class="hl6-landing-grid" id="hl6-landing-grid">' +
       '<svg class="hl6-landing-grid-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">' +
       '<line class="hl6-landing-grid-line" id="hl6-landing-line-h1" x1="0" y1="33.333" x2="100" y2="33.333" pathLength="1"/>' +
       '<line class="hl6-landing-grid-line" id="hl6-landing-line-h2" x1="0" y1="66.666" x2="100" y2="66.666" pathLength="1"/>' +
@@ -81,12 +78,7 @@
       '<span class="hl6-landing-corner hl6-landing-corner--br"></span>' +
       '</div>';
 
-    cursorDot = document.createElement('div');
-    cursorDot.id = 'hl6-landing-cursor';
-    cursorDot.setAttribute('aria-hidden', 'true');
-
     document.body.appendChild(root);
-    document.body.appendChild(cursorDot);
 
     slidesEl = document.getElementById('hl6-landing-slides');
     gridLayer = document.getElementById('hl6-landing-grid');
@@ -135,39 +127,32 @@
     gridTimers = [];
   }
 
-  function resetGrid() {
-    clearGridTimers();
-    LINE_IDS.forEach(function (id) {
-      var el = document.getElementById(id);
-      if (el) el.classList.remove('is-drawn');
+  function startGridLiveMotion() {
+    LINE_IDS.forEach(function (id, i) {
+      var line = document.getElementById(id);
+      if (!line) return;
+      line.classList.add('is-live');
+      line.style.animationDuration = (2.2 + i * 0.35) + 's';
     });
     DOT_IDS.forEach(function (id) {
-      var el = document.getElementById(id);
-      if (el) el.classList.remove('is-visible');
+      var dot = document.getElementById(id);
+      if (dot) dot.classList.add('is-visible');
     });
+    gridReady = true;
   }
 
-  function drawGrid() {
-    if (destroyed) return;
-    resetGrid();
-    gridLayer.classList.remove('is-hidden');
-
+  function initPersistentGrid() {
+    if (destroyed || gridReady) return;
     var step = 0;
     function nextLine() {
-      if (destroyed) return;
+      if (destroyed || gridReady) return;
       if (step >= LINE_IDS.length) {
-        DOT_IDS.forEach(function (id, i) {
-          gridTimers.push(setTimeout(function () {
-            if (destroyed) return;
-            var dot = document.getElementById(id);
-            if (dot) dot.classList.add('is-visible');
-          }, i * 100));
-        });
+        startGridLiveMotion();
         return;
       }
       var delay = step === 0 ? 350 : randInt(500, 1200);
       gridTimers.push(setTimeout(function () {
-        if (destroyed) return;
+        if (destroyed || gridReady) return;
         var line = document.getElementById(LINE_IDS[step]);
         if (line) line.classList.add('is-drawn');
         step += 1;
@@ -175,13 +160,6 @@
       }, delay));
     }
     nextLine();
-  }
-
-  function hideGrid(done) {
-    clearGridTimers();
-    resetGrid();
-    gridLayer.classList.add('is-hidden');
-    setTimeout(done, GRID_FADE_MS);
   }
 
   function applyKenBurns(slide) {
@@ -199,38 +177,27 @@
     displayTimer = setTimeout(advanceSlide, rand(7, 14) * 1000);
   }
 
-  function activateSlide(photoIndex, isFirst) {
+  function activateSlide(photoIndex) {
     if (destroyed) return;
     slideEls.forEach(function (s, i) {
       s.classList.toggle('is-active', i === photoIndex);
     });
     applyKenBurns(slideEls[photoIndex]);
-
-    setTimeout(function () {
-      if (destroyed) return;
-      drawGrid();
-      scheduleHold();
-      busy = false;
-    }, isFirst ? 300 : CROSSFADE_MS);
+    scheduleHold();
   }
 
   function goToNextSlide() {
-    if (destroyed || busy) return;
-    busy = true;
+    if (destroyed) return;
     if (displayTimer) {
       clearTimeout(displayTimer);
       displayTimer = null;
     }
-
-    hideGrid(function () {
-      if (destroyed) return;
-      orderPos += 1;
-      if (orderPos >= order.length) {
-        buildOrder();
-        orderPos = 0;
-      }
-      activateSlide(order[orderPos], false);
-    });
+    orderPos += 1;
+    if (orderPos >= order.length) {
+      buildOrder();
+      orderPos = 0;
+    }
+    activateSlide(order[orderPos]);
   }
 
   function advanceSlide() {
@@ -249,8 +216,8 @@
   function startSlideshow() {
     buildOrder();
     buildSlides();
-    busy = true;
-    activateSlide(order[0], true);
+    initPersistentGrid();
+    activateSlide(order[0]);
   }
 
   function startLesson() {
@@ -263,7 +230,6 @@
     setTimeout(function () {
       if (root && root.parentNode) root.parentNode.removeChild(root);
       if (chromeEl && chromeEl.parentNode) chromeEl.parentNode.removeChild(chromeEl);
-      if (cursorDot && cursorDot.parentNode) cursorDot.parentNode.removeChild(cursorDot);
       root = null;
       chromeEl = null;
     }, EXIT_MS);
@@ -312,38 +278,11 @@
   }
 
   function bindEvents() {
-    document.addEventListener('pointermove', onPointerMove, { passive: true });
-    document.addEventListener('mousemove', onPointerMove, { passive: true });
     startBtn.addEventListener('click', function (e) {
       e.preventDefault();
       startLesson();
     });
-    startBtn.addEventListener('mouseenter', function () {
-      cursorDot.classList.add('is-over-link');
-    });
-    startBtn.addEventListener('mouseleave', function () {
-      cursorDot.classList.remove('is-over-link');
-    });
-    fullscreenBtn.addEventListener('mouseenter', function () {
-      cursorDot.classList.add('is-over-link');
-    });
-    fullscreenBtn.addEventListener('mouseleave', function () {
-      cursorDot.classList.remove('is-over-link');
-    });
     initLandingFullscreen();
-  }
-
-  function moveCursorDot(clientX, clientY) {
-    if (!cursorDot || !document.documentElement.classList.contains('hl6-landing-active')) return;
-    var size = cursorDot.classList.contains('is-over-link') ? 14 : 8;
-    var half = size / 2;
-    cursorDot.style.left = (clientX - half) + 'px';
-    cursorDot.style.top = (clientY - half) + 'px';
-    cursorDot.classList.add('is-visible');
-  }
-
-  function onPointerMove(e) {
-    moveCursorDot(e.clientX, e.clientY);
   }
 
   function ensureBrandVisible() {

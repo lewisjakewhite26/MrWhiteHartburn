@@ -135,10 +135,6 @@ html.hl6-landing-active #hl6-landing {
   transition: opacity 0.85s ease;
 }
 
-#hl6-landing .hl6-landing-grid.is-hidden {
-  opacity: 0;
-}
-
 #hl6-landing .hl6-landing-grid-svg {
   width: 100%;
   height: 100%;
@@ -156,6 +152,33 @@ html.hl6-landing-active #hl6-landing {
 #hl6-landing .hl6-landing-grid-line.is-drawn {
   stroke-dashoffset: 0;
   transition: stroke-dashoffset 1.05s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#hl6-landing .hl6-landing-grid-line.is-live {
+  stroke-dasharray: 0.14 0.09;
+  stroke-dashoffset: 0;
+  animation: hl6LandingGridFlow linear infinite;
+}
+
+#hl6-landing .hl6-landing-grid-line.is-live#hl6-landing-line-h1 {
+  animation-duration: 2.3s;
+}
+#hl6-landing .hl6-landing-grid-line.is-live#hl6-landing-line-h2 {
+  animation-duration: 2.7s;
+  animation-direction: reverse;
+}
+#hl6-landing .hl6-landing-grid-line.is-live#hl6-landing-line-v1 {
+  animation-duration: 3.1s;
+}
+#hl6-landing .hl6-landing-grid-line.is-live#hl6-landing-line-v2 {
+  animation-duration: 2.5s;
+  animation-direction: reverse;
+}
+
+@keyframes hl6LandingGridFlow {
+  to {
+    stroke-dashoffset: -1;
+  }
 }
 
 #hl6-landing .hl6-landing-dots {
@@ -333,34 +356,7 @@ html:not(.hl6-landing-active) #hl6-landing-chrome {
   display: none;
 }
 
-#hl6-landing-cursor {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 8px;
-  height: 8px;
-  margin: 0;
-  border-radius: 50%;
-  background: #007aff;
-  box-shadow: 0 0 12px rgba(0, 122, 255, 0.9);
-  pointer-events: none;
-  z-index: 200001;
-  opacity: 0;
-  will-change: left, top, width, height;
-  transition: width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
-}
-
-#hl6-landing-cursor.is-visible {
-  opacity: 1;
-}
-
-#hl6-landing-cursor.is-over-link {
-  width: 14px;
-  height: 14px;
-}
-
 html:not(.hl6-landing-active) #hl6-landing,
-html:not(.hl6-landing-active) #hl6-landing-cursor,
 html:not(.hl6-landing-active) #hl6-landing-chrome {
   display: none;
 }
