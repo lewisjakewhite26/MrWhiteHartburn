@@ -20,10 +20,12 @@
   var EXIT_MS = 1100;
 
   var root;
+  var chromeEl;
   var slidesEl;
   var gridLayer;
   var cursorDot;
   var startBtn;
+  var fullscreenBtn;
 
   var order = [];
   var orderPos = 0;
@@ -77,11 +79,7 @@
       '<span class="hl6-landing-corner hl6-landing-corner--tr"></span>' +
       '<span class="hl6-landing-corner hl6-landing-corner--bl"></span>' +
       '<span class="hl6-landing-corner hl6-landing-corner--br"></span>' +
-      '</div>' +
-      '<button type="button" class="hl6-landing-start" id="hl6-landing-start">' +
-      'ENTER LESSON' +
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>' +
-      '</button>';
+      '</div>';
 
     cursorDot = document.createElement('div');
     cursorDot.id = 'hl6-landing-cursor';
@@ -92,7 +90,23 @@
 
     slidesEl = document.getElementById('hl6-landing-slides');
     gridLayer = document.getElementById('hl6-landing-grid');
+  }
+
+  function mountChrome() {
+    chromeEl = document.createElement('div');
+    chromeEl.id = 'hl6-landing-chrome';
+    chromeEl.innerHTML =
+      '<button type="button" class="hl6-landing-fs-btn" id="hl6-landing-fullscreen-btn" title="Enter Fullscreen" aria-label="Enter Fullscreen">' +
+      '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<path d="M8 3H5a2 2 0 0 0-2 2v3"></path><path d="M21 8V5a2 2 0 0 0-2-2h-3"></path>' +
+      '<path d="M3 16v3a2 2 0 0 0 2 2h3"></path><path d="M16 21h3a2 2 0 0 0 2-2v-3"></path></svg></button>' +
+      '<button type="button" class="hl6-landing-start" id="hl6-landing-start">' +
+      'ENTER LESSON' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>' +
+      '</button>';
+    document.body.appendChild(chromeEl);
     startBtn = document.getElementById('hl6-landing-start');
+    fullscreenBtn = document.getElementById('hl6-landing-fullscreen-btn');
   }
 
   function buildOrder() {
@@ -243,17 +257,58 @@
     if (!root) return;
     stopSlideshow();
     if (root) root.classList.add('is-exiting');
+    if (chromeEl) chromeEl.classList.add('is-exiting');
     document.documentElement.classList.remove('hl6-landing-active');
 
     setTimeout(function () {
       if (root && root.parentNode) root.parentNode.removeChild(root);
+      if (chromeEl && chromeEl.parentNode) chromeEl.parentNode.removeChild(chromeEl);
       if (cursorDot && cursorDot.parentNode) cursorDot.parentNode.removeChild(cursorDot);
       root = null;
+      chromeEl = null;
     }, EXIT_MS);
 
     try {
       sessionStorage.setItem('hl6-lesson-started', '1');
     } catch (e) {}
+  }
+
+  function updateFullscreenIcon(isFull) {
+    if (!fullscreenBtn) return;
+    fullscreenBtn.title = isFull ? 'Exit Fullscreen' : 'Enter Fullscreen';
+    fullscreenBtn.setAttribute('aria-label', fullscreenBtn.title);
+    var svg = fullscreenBtn.querySelector('svg');
+    if (!svg) return;
+    if (isFull) {
+      svg.innerHTML =
+        '<path d="M8 3v3a2 2 0 0 1-2 2H3"></path><path d="M21 8h-3a2 2 0 0 1-2-2V3"></path>' +
+        '<path d="M3 16h3a2 2 0 0 1 2 2v3"></path><path d="M16 21v-3a2 2 0 0 1 2-2h3"></path>';
+    } else {
+      svg.innerHTML =
+        '<path d="M8 3H5a2 2 0 0 0-2 2v3"></path><path d="M21 8V5a2 2 0 0 0-2-2h-3"></path>' +
+        '<path d="M3 16v3a2 2 0 0 0 2 2h3"></path><path d="M16 21h3a2 2 0 0 0 2-2v-3"></path>';
+    }
+  }
+
+  function initLandingFullscreen() {
+    if (!fullscreenBtn) return;
+    fullscreenBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().then(function () {
+          updateFullscreenIcon(true);
+        }).catch(function () {});
+      } else {
+        document.exitFullscreen().then(function () {
+          updateFullscreenIcon(false);
+        }).catch(function () {});
+      }
+    });
+    document.addEventListener('fullscreenchange', function () {
+      if (!document.documentElement.classList.contains('hl6-landing-active')) return;
+      updateFullscreenIcon(!!document.fullscreenElement);
+    });
   }
 
   function bindEvents() {
@@ -269,6 +324,13 @@
     startBtn.addEventListener('mouseleave', function () {
       cursorDot.classList.remove('is-over-link');
     });
+    fullscreenBtn.addEventListener('mouseenter', function () {
+      cursorDot.classList.add('is-over-link');
+    });
+    fullscreenBtn.addEventListener('mouseleave', function () {
+      cursorDot.classList.remove('is-over-link');
+    });
+    initLandingFullscreen();
   }
 
   function moveCursorDot(clientX, clientY) {
@@ -300,6 +362,7 @@
 
     document.documentElement.classList.add('hl6-landing-active');
     mountLanding();
+    mountChrome();
     bindEvents();
 
     PHOTOS.forEach(function (url) {
