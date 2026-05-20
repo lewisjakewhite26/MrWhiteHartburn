@@ -346,6 +346,22 @@
     moveCursorDot(e.clientX, e.clientY);
   }
 
+  function ensureBrandVisible() {
+    function tick(n) {
+      var cluster = document.getElementById('hl6-brand-cluster');
+      if (cluster) {
+        if (window.hl6SyncBrandSize) window.hl6SyncBrandSize();
+        else window.dispatchEvent(new Event('resize'));
+        return;
+      }
+      if (n <= 0) return;
+      setTimeout(function () {
+        tick(n - 1);
+      }, 100);
+    }
+    tick(80);
+  }
+
   function shouldSkipLanding() {
     try {
       if (sessionStorage.getItem('hl6-lesson-started') === '1') return true;
@@ -364,6 +380,7 @@
     mountLanding();
     mountChrome();
     bindEvents();
+    ensureBrandVisible();
 
     PHOTOS.forEach(function (url) {
       var img = new Image();

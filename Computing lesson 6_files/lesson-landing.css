@@ -1,11 +1,18 @@
 /* Intro landing overlay — scoped to #hl6-landing */
 
 html.hl6-landing-active #lesson-dial-root,
-html.hl6-landing-active #hl6-brand-cluster,
 html.hl6-landing-active #hl6-global-timer,
 html.hl6-landing-active #hl6-timer-bar {
   opacity: 0 !important;
   visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Same centred Hartburn logo + Mr. White as the lesson (from #hl6-brand-cluster) */
+html.hl6-landing-active #hl6-brand-cluster {
+  z-index: 200055 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
   pointer-events: none !important;
 }
 

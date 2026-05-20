@@ -837,6 +837,8 @@
     name.style.fontSize = Math.round(h * 0.58) + 'px';
   }
 
+  window.hl6SyncBrandSize = syncNameSize;
+
   function setupBrandCluster() {
     if (document.getElementById('hl6-brand-cluster')) return true;
     var logo = document.querySelector('.hl6-school-logo-badge');
