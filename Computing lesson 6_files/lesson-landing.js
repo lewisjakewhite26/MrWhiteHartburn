@@ -14,6 +14,12 @@
 
   var KB_CLASSES = ['kb-a', 'kb-b', 'kb-c', 'kb-d'];
   var LINE_IDS = ['hl6-landing-line-h1', 'hl6-landing-line-h2', 'hl6-landing-line-v1', 'hl6-landing-line-v2'];
+  var LINE_DEFS = {
+    'hl6-landing-line-h1': { x1: 0, y1: 33.333, x2: 100, y2: 33.333 },
+    'hl6-landing-line-h2': { x1: 0, y1: 66.666, x2: 100, y2: 66.666 },
+    'hl6-landing-line-v1': { x1: 33.333, y1: 0, x2: 33.333, y2: 100 },
+    'hl6-landing-line-v2': { x1: 66.666, y1: 0, x2: 66.666, y2: 100 }
+  };
   var DOT_IDS = ['hl6-landing-dot-tl', 'hl6-landing-dot-tr', 'hl6-landing-dot-bl', 'hl6-landing-dot-br'];
   var EXIT_MS = 1100;
 
@@ -128,12 +134,30 @@
     gridTimers = [];
   }
 
+  function setLineDrawDirection(id, fromCanonicalStart) {
+    var line = document.getElementById(id);
+    var d = LINE_DEFS[id];
+    if (!line || !d) return;
+    if (fromCanonicalStart) {
+      line.setAttribute('x1', d.x1);
+      line.setAttribute('y1', d.y1);
+      line.setAttribute('x2', d.x2);
+      line.setAttribute('y2', d.y2);
+    } else {
+      line.setAttribute('x1', d.x2);
+      line.setAttribute('y1', d.y2);
+      line.setAttribute('x2', d.x1);
+      line.setAttribute('y2', d.y1);
+    }
+  }
+
   function resetGridLines() {
     LINE_IDS.forEach(function (id) {
       var line = document.getElementById(id);
       if (!line) return;
       line.classList.remove('is-drawn');
       line.style.transitionDuration = '';
+      line.style.transitionTimingFunction = '';
     });
   }
 
@@ -171,8 +195,10 @@
       var delay = step === 0 ? randInt(650, 1500) : randInt(380, 1450);
       gridTimers.push(setTimeout(function () {
         if (destroyed || !gridLoopActive) return;
-        var line = document.getElementById(sequence[step]);
+        var lineId = sequence[step];
+        var line = document.getElementById(lineId);
         if (line) {
+          setLineDrawDirection(lineId, Math.random() > 0.5);
           line.style.transitionDuration = rand(0.7, 1.4).toFixed(2) + 's';
           line.style.transitionTimingFunction = Math.random() > 0.45
             ? 'cubic-bezier(0.4, 0, 0.2, 1)'
