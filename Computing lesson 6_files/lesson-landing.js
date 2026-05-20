@@ -151,16 +151,6 @@
     }
   }
 
-  function resetGridLines() {
-    LINE_IDS.forEach(function (id) {
-      var line = document.getElementById(id);
-      if (!line) return;
-      line.classList.remove('is-drawn');
-      line.style.transitionDuration = '';
-      line.style.transitionTimingFunction = '';
-    });
-  }
-
   function showGridDots() {
     if (gridDotsShown) return;
     gridDotsShown = true;
@@ -169,53 +159,24 @@
         if (!gridLoopActive) return;
         var dot = document.getElementById(id);
         if (dot) dot.classList.add('is-visible');
-      }, i * 100));
+      }, i * 120));
     });
-  }
-
-  function runGridDrawLoop() {
-    if (destroyed || !gridLoopActive) return;
-    clearGridTimers();
-    gridLoopActive = true;
-    resetGridLines();
-
-    var sequence = shuffle(LINE_IDS.slice());
-    var step = 0;
-
-    function nextLine() {
-      if (destroyed || !gridLoopActive) return;
-      if (step >= sequence.length) {
-        showGridDots();
-        gridTimers.push(setTimeout(function () {
-          if (destroyed || !gridLoopActive) return;
-          runGridDrawLoop();
-        }, randInt(1200, 3200)));
-        return;
-      }
-      var delay = step === 0 ? randInt(650, 1500) : randInt(380, 1450);
-      gridTimers.push(setTimeout(function () {
-        if (destroyed || !gridLoopActive) return;
-        var lineId = sequence[step];
-        var line = document.getElementById(lineId);
-        if (line) {
-          setLineDrawDirection(lineId, Math.random() > 0.5);
-          line.style.transitionDuration = rand(0.7, 1.4).toFixed(2) + 's';
-          line.style.transitionTimingFunction = Math.random() > 0.45
-            ? 'cubic-bezier(0.4, 0, 0.2, 1)'
-            : 'cubic-bezier(0.22, 0.85, 0.32, 1)';
-          line.classList.add('is-drawn');
-        }
-        step += 1;
-        nextLine();
-      }, delay));
-    }
-    nextLine();
   }
 
   function initPersistentGrid() {
     if (destroyed || gridLoopActive) return;
     gridLoopActive = true;
-    runGridDrawLoop();
+
+    LINE_IDS.forEach(function (id) {
+      setLineDrawDirection(id, Math.random() > 0.5);
+      var line = document.getElementById(id);
+      if (line) line.classList.add('is-animating');
+    });
+
+    gridTimers.push(setTimeout(function () {
+      if (!gridLoopActive || destroyed) return;
+      showGridDots();
+    }, 3200));
   }
 
   function applyKenBurns(slide) {

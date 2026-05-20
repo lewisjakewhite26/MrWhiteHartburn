@@ -147,11 +147,46 @@ html.hl6-landing-active #hl6-landing {
   filter: drop-shadow(0 0 6px rgba(0, 122, 255, 0.85)) drop-shadow(0 0 14px rgba(0, 122, 255, 0.45));
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
-  transition: stroke-dashoffset 1.05s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-#hl6-landing .hl6-landing-grid-line.is-drawn {
-  stroke-dashoffset: 0;
+/* Each line draws and fades on its own timeline — smooth, never in sync */
+#hl6-landing .hl6-landing-grid-line.is-animating {
+  animation: hl6LandingDrawLine ease-in-out infinite;
+}
+
+#hl6-landing #hl6-landing-line-h1.is-animating {
+  animation-duration: 5.4s;
+  animation-delay: 0s;
+}
+
+#hl6-landing #hl6-landing-line-h2.is-animating {
+  animation-duration: 6.6s;
+  animation-delay: 1.4s;
+}
+
+#hl6-landing #hl6-landing-line-v1.is-animating {
+  animation-duration: 5.9s;
+  animation-delay: 2.2s;
+}
+
+#hl6-landing #hl6-landing-line-v2.is-animating {
+  animation-duration: 6.2s;
+  animation-delay: 0.85s;
+}
+
+@keyframes hl6LandingDrawLine {
+  0% {
+    stroke-dashoffset: 1;
+  }
+  40% {
+    stroke-dashoffset: 0;
+  }
+  60% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 1;
+  }
 }
 
 #hl6-landing .hl6-landing-dots {
