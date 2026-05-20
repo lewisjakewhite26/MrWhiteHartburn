@@ -9,7 +9,13 @@ html.hl6-landing-active #hl6-timer-bar {
   pointer-events: none !important;
 }
 
-/* Keep the normal system cursor visible in Chrome/Edge; blue dot is decorative only */
+html.hl6-landing-active,
+html.hl6-landing-active body {
+  overflow: hidden !important;
+  width: 100%;
+  height: 100%;
+}
+
 html.hl6-landing-active #hl6-landing {
   cursor: default;
 }
@@ -17,9 +23,12 @@ html.hl6-landing-active #hl6-landing {
 #hl6-landing {
   position: fixed;
   inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
   z-index: 200000;
   overflow: hidden;
-  background: #0a0a0a;
+  background: #000;
   font-family: 'Bebas Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   opacity: 1;
@@ -39,6 +48,7 @@ html.hl6-landing-active #hl6-landing {
 #hl6-landing .hl6-landing-slide {
   position: absolute;
   inset: 0;
+  overflow: hidden;
   opacity: 0;
   transition: opacity 2.5s ease-in-out;
   pointer-events: none;
@@ -52,10 +62,12 @@ html.hl6-landing-active #hl6-landing {
 
 #hl6-landing .hl6-landing-slide img {
   position: absolute;
-  inset: -6%;
-  width: 112%;
-  height: 112%;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
+  object-position: center;
+  transform-origin: center center;
   filter: brightness(0.55);
   will-change: transform;
 }
@@ -66,20 +78,20 @@ html.hl6-landing-active #hl6-landing {
 #hl6-landing .hl6-landing-slide img.kb-d { animation: hl6LandingKbD linear infinite; }
 
 @keyframes hl6LandingKbA {
-  from { transform: scale(1) translate(0, 0); }
-  to   { transform: scale(1.12) translate(-2%, -1.5%); }
+  from { transform: scale(1.05); }
+  to   { transform: scale(1.14); }
 }
 @keyframes hl6LandingKbB {
-  from { transform: scale(1.08) translate(1%, 0); }
-  to   { transform: scale(1) translate(-1.5%, 2%); }
+  from { transform: scale(1.12); }
+  to   { transform: scale(1.04); }
 }
 @keyframes hl6LandingKbC {
-  from { transform: scale(1) translate(-1%, 1%); }
-  to   { transform: scale(1.14) translate(2%, -2%); }
+  from { transform: scale(1.04); }
+  to   { transform: scale(1.16); }
 }
 @keyframes hl6LandingKbD {
-  from { transform: scale(1.1) translate(2%, -1%); }
-  to   { transform: scale(1.02) translate(-2%, 1.5%); }
+  from { transform: scale(1.1); }
+  to   { transform: scale(1.06); }
 }
 
 #hl6-landing .hl6-landing-grid {
@@ -217,93 +229,15 @@ html.hl6-landing-active #hl6-landing {
   50% { transform: translate(-2%, -1%); }
 }
 
-#hl6-landing .hl6-landing-brand-top {
-  position: absolute;
-  top: clamp(1.25rem, 3vh, 2rem);
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 30;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  opacity: 0;
-  animation: hl6LandingFadeBrand 1.2s ease 0.4s forwards;
-  white-space: nowrap;
-}
-
-@keyframes hl6LandingFadeBrand {
-  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
-  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
-
-#hl6-landing .hl6-landing-school {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(0.65rem, 1.1vw, 0.85rem);
-  letter-spacing: 0.35em;
-  color: rgba(255, 255, 255, 0.45);
-}
-
-#hl6-landing .hl6-landing-divider {
-  width: 1px;
-  height: 1.1em;
-  background: rgba(255, 255, 255, 0.25);
-}
-
-#hl6-landing .hl6-landing-mr {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-style: italic;
-  font-size: clamp(0.95rem, 1.6vw, 1.15rem);
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.5);
-}
-
-#hl6-landing .hl6-landing-copy {
-  position: absolute;
-  bottom: clamp(4.5rem, 12vh, 7rem);
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 30;
-  text-align: center;
-  width: min(92vw, 56rem);
-  opacity: 0;
-  animation: hl6LandingFadeCopy 1.4s ease 0.7s forwards;
-}
-
-@keyframes hl6LandingFadeCopy {
-  from { opacity: 0; transform: translateX(-50%) translateY(12px); }
-  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
-
-#hl6-landing .hl6-landing-label {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(0.7rem, 1.2vw, 0.9rem);
-  letter-spacing: 0.45em;
-  color: #007aff;
-  margin-bottom: 0.5rem;
-}
-
-#hl6-landing .hl6-landing-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(2.8rem, 8vw, 5.5rem);
-  letter-spacing: 0.06em;
-  line-height: 0.95;
-  color: #fff;
-  text-shadow: 0 4px 40px rgba(0, 0, 0, 0.6);
-}
-
-#hl6-landing .hl6-landing-sub {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-style: italic;
-  font-size: clamp(1.1rem, 2.2vw, 1.65rem);
-  color: rgba(255, 255, 255, 0.5);
-  margin-top: 0.35rem;
-}
-
 #hl6-landing .hl6-landing-start {
+  position: absolute;
+  bottom: clamp(2rem, 6vh, 3.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  margin-top: 1.35rem;
   font-family: 'Bebas Neue', sans-serif;
   font-size: clamp(0.65rem, 1vw, 0.8rem);
   letter-spacing: 0.42em;
@@ -312,12 +246,20 @@ html.hl6-landing-active #hl6-landing {
   border: none;
   padding: 0;
   cursor: pointer;
+  opacity: 0;
+  animation: hl6LandingFadeStart 1.2s ease 0.5s forwards;
   transition: color 0.35s ease, letter-spacing 0.35s ease;
+}
+
+@keyframes hl6LandingFadeStart {
+  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
 #hl6-landing .hl6-landing-start:hover {
   color: #fff;
   letter-spacing: 0.48em;
+  transform: translateX(-50%);
 }
 
 #hl6-landing .hl6-landing-start svg {
@@ -328,43 +270,6 @@ html.hl6-landing-active #hl6-landing {
 
 #hl6-landing .hl6-landing-start:hover svg {
   transform: translateX(4px);
-}
-
-#hl6-landing .hl6-landing-progress {
-  position: absolute;
-  bottom: clamp(1.5rem, 4vh, 2.25rem);
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 30;
-  display: flex;
-  gap: 0.55rem;
-  align-items: center;
-}
-
-#hl6-landing .hl6-landing-progress-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.25);
-  transition: background 0.4s ease, width 0.4s ease, height 0.4s ease;
-}
-
-#hl6-landing .hl6-landing-progress-dot.is-active {
-  width: 9px;
-  height: 9px;
-  background: #007aff;
-  box-shadow: 0 0 12px rgba(0, 122, 255, 0.7);
-}
-
-#hl6-landing .hl6-landing-counter {
-  position: absolute;
-  bottom: clamp(1.5rem, 4vh, 2.25rem);
-  right: clamp(1.25rem, 3vw, 2rem);
-  z-index: 30;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(0.75rem, 1.1vw, 0.95rem);
-  letter-spacing: 0.2em;
-  color: rgba(255, 255, 255, 0.4);
 }
 
 #hl6-landing-cursor {

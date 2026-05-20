@@ -22,15 +22,12 @@
   var root;
   var slidesEl;
   var gridLayer;
-  var progressDotsEl;
-  var slideCounterEl;
   var cursorDot;
   var startBtn;
 
   var order = [];
   var orderPos = 0;
   var slideEls = [];
-  var activePhotoIndex = -1;
   var displayTimer = null;
   var gridTimers = [];
   var busy = false;
@@ -53,10 +50,6 @@
       a[j] = t;
     }
     return a;
-  }
-
-  function pad2(n) {
-    return n < 10 ? '0' + n : String(n);
   }
 
   function mountLanding() {
@@ -85,24 +78,12 @@
       '<span class="hl6-landing-corner hl6-landing-corner--bl"></span>' +
       '<span class="hl6-landing-corner hl6-landing-corner--br"></span>' +
       '</motion.div>' +
-      '<motion.div class="hl6-landing-vignette" aria-hidden="true"></motion.div>' +
-      '<motion.div class="hl6-landing-grain" aria-hidden="true"></motion.div>' +
-      '<header class="hl6-landing-brand-top">' +
-      '<span class="hl6-landing-school">HARTBURN PRIMARY SCHOOL</span>' +
-      '<span class="hl6-landing-divider" aria-hidden="true"></span>' +
-      '<span class="hl6-landing-mr">Mr. White</span>' +
-      '</header>' +
-      '<motion.div class="hl6-landing-copy">' +
-      '<p class="hl6-landing-label">COMPUTING / PHOTOGRAPHY</p>' +
-      '<h1 class="hl6-landing-title">PORTRAIT PHOTOGRAPHY</h1>' +
-      '<p class="hl6-landing-sub">Learning Focus — Rule of Thirds</p>' +
+      '<div class="hl6-landing-vignette" aria-hidden="true"></motion.div>' +
+      '<div class="hl6-landing-grain" aria-hidden="true"></motion.div>' +
       '<button type="button" class="hl6-landing-start" id="hl6-landing-start">' +
       'START LESSON' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>' +
-      '</button>' +
-      '</motion.div>' +
-      '<nav class="hl6-landing-progress" id="hl6-landing-progress" aria-label="Slide progress"></nav>' +
-      '<motion.div class="hl6-landing-counter" id="hl6-landing-counter" aria-live="polite">01 / 05</motion.div>';
+      '</button>';
 
     root.innerHTML = root.innerHTML.split('motion.div').join('div');
 
@@ -115,8 +96,6 @@
 
     slidesEl = document.getElementById('hl6-landing-slides');
     gridLayer = document.getElementById('hl6-landing-grid');
-    progressDotsEl = document.getElementById('hl6-landing-progress');
-    slideCounterEl = document.getElementById('hl6-landing-counter');
     startBtn = document.getElementById('hl6-landing-start');
   }
 
@@ -139,23 +118,6 @@
       slidesEl.appendChild(slide);
       slideEls.push(slide);
     });
-  }
-
-  function buildProgressDots() {
-    PHOTOS.forEach(function (_, i) {
-      var dot = document.createElement('span');
-      dot.className = 'hl6-landing-progress-dot';
-      dot.dataset.photoIndex = String(i);
-      progressDotsEl.appendChild(dot);
-    });
-  }
-
-  function updateUI() {
-    var dots = progressDotsEl.querySelectorAll('.hl6-landing-progress-dot');
-    dots.forEach(function (d) {
-      d.classList.toggle('is-active', Number(d.dataset.photoIndex) === activePhotoIndex);
-    });
-    slideCounterEl.textContent = pad2(orderPos + 1) + ' / ' + pad2(PHOTOS.length);
   }
 
   function clearGridTimers() {
@@ -229,11 +191,9 @@
 
   function activateSlide(photoIndex, isFirst) {
     if (destroyed) return;
-    activePhotoIndex = photoIndex;
     slideEls.forEach(function (s, i) {
       s.classList.toggle('is-active', i === photoIndex);
     });
-    updateUI();
     applyKenBurns(slideEls[photoIndex]);
 
     setTimeout(function () {
@@ -279,7 +239,6 @@
   function startSlideshow() {
     buildOrder();
     buildSlides();
-    buildProgressDots();
     busy = true;
     activateSlide(order[0], true);
   }
