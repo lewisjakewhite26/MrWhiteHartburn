@@ -1,5 +1,15 @@
 /* Intro landing overlay — scoped to #hl6-landing */
 
+html,
+body {
+  background-color: #0c0e12 !important;
+}
+
+html.hl6-landing-active #container {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
 html.hl6-landing-active #lesson-dial-root,
 html.hl6-landing-active #hl6-global-timer,
 html.hl6-landing-active #hl6-timer-bar {
@@ -39,7 +49,6 @@ html.hl6-landing-active #hl6-landing {
   font-family: 'Bebas Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   opacity: 1;
-  transition: opacity 1.65s cubic-bezier(0.45, 0, 0.55, 1);
   isolation: isolate;
 }
 
@@ -51,7 +60,6 @@ html.hl6-landing-active #hl6-landing {
   z-index: 20;
   pointer-events: none;
   background: radial-gradient(ellipse at center, transparent 35%, rgba(0, 0, 0, 0.55) 72%, rgba(0, 0, 0, 0.88) 100%);
-  transition: background 1.65s cubic-bezier(0.45, 0, 0.55, 1);
 }
 
 #hl6-landing::after {
@@ -66,15 +74,6 @@ html.hl6-landing-active #hl6-landing {
   background-size: 256px 256px;
   animation: hl6LandingGrain 12s linear infinite;
   will-change: transform;
-}
-
-#hl6-landing.is-exiting {
-  opacity: 0;
-  pointer-events: none;
-}
-
-#hl6-landing.is-exiting::before {
-  background: radial-gradient(ellipse at center, transparent 8%, rgba(0, 0, 0, 0.75) 48%, #000 100%);
 }
 
 #hl6-landing .hl6-landing-slides {
@@ -288,11 +287,6 @@ html.hl6-landing-active #hl6-landing {
   inset: 0;
   z-index: 200050;
   pointer-events: none;
-  transition: opacity 0.55s ease;
-}
-
-#hl6-landing-chrome.is-exiting {
-  opacity: 0;
 }
 
 #hl6-landing-chrome .hl6-landing-fs-btn {
@@ -374,29 +368,49 @@ html:not(.hl6-landing-active) #hl6-landing-chrome {
   display: none;
 }
 
-/* Enter lesson: slow dissolve (landing out, lesson in) */
-html.hl6-lesson-entering #container {
+/* Enter lesson: fade to black, then fade into lesson */
+#hl6-lesson-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 200100;
+  background: #000;
   opacity: 0;
-  animation: hl6LessonDissolveIn 1.4s cubic-bezier(0.45, 0, 0.55, 1) forwards;
+  pointer-events: all;
 }
 
-@keyframes hl6LessonDissolveIn {
+#hl6-lesson-curtain.is-to-black {
+  animation: hl6CurtainToBlack 0.8s ease-in forwards;
+}
+
+#hl6-lesson-curtain.is-from-black {
+  opacity: 1;
+}
+
+#hl6-lesson-curtain.is-from-black.is-revealing {
+  animation: hl6CurtainFromBlack 0.9s ease-out forwards;
+}
+
+@keyframes hl6CurtainToBlack {
   to {
     opacity: 1;
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  #hl6-landing {
-    transition-duration: 0.38s;
+@keyframes hl6CurtainFromBlack {
+  from {
+    opacity: 1;
   }
-
-  #hl6-landing::before {
-    transition-duration: 0.38s;
-  }
-
-  html.hl6-lesson-entering #container {
-    animation-duration: 0.32s;
+  to {
+    opacity: 0;
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  #hl6-lesson-curtain.is-to-black {
+    animation-duration: 0.25s;
+  }
+
+  #hl6-lesson-curtain.is-from-black.is-revealing {
+    animation-duration: 0.3s;
+  }
+}

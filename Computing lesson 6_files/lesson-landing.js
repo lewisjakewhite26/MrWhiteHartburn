@@ -21,10 +21,8 @@
     'hl6-landing-line-v2': { x1: 66.666, y1: 0, x2: 66.666, y2: 100 }
   };
   var DOT_IDS = ['hl6-landing-dot-tl', 'hl6-landing-dot-tr', 'hl6-landing-dot-bl', 'hl6-landing-dot-br'];
-  var FADE_OUT_MS = 1650;
-  var FADE_IN_MS = 1400;
-  var FADE_OUT_REDUCE_MS = 380;
-  var FADE_IN_REDUCE_MS = 320;
+  var FADE_TO_BLACK_MS = 800;
+  var FADE_FROM_BLACK_MS = 900;
   var root;
   var chromeEl;
   var slidesEl;
@@ -241,25 +239,11 @@
     activateSlide(order[0]);
   }
 
-  function prefersReducedMotion() {
-    try {
-      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    } catch (e) {
-      return false;
-    }
-  }
-
   function removeLandingDom() {
     if (root && root.parentNode) root.parentNode.removeChild(root);
     if (chromeEl && chromeEl.parentNode) chromeEl.parentNode.removeChild(chromeEl);
     root = null;
     chromeEl = null;
-  }
-
-  function finishLessonTransition() {
-    document.documentElement.classList.remove('hl6-lesson-entering');
-    transitionActive = false;
-    if (window.hl6SyncBrandSize) window.hl6SyncBrandSize();
   }
 
   function startLesson() {
@@ -270,27 +254,40 @@
       startBtn.setAttribute('aria-busy', 'true');
     }
 
+    var curtain = document.createElement('div');
+    curtain.id = 'hl6-lesson-curtain';
+    curtain.className = 'hl6-lesson-curtain';
+    curtain.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(curtain);
+
+    var toBlack = FADE_TO_BLACK_MS;
+    var fromBlack = FADE_FROM_BLACK_MS;
     try {
-      sessionStorage.setItem('hl6-lesson-started', '1');
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        toBlack = 250;
+        fromBlack = 300;
+      }
     } catch (e) {}
 
-    var reduced = prefersReducedMotion();
-    var fadeOut = reduced ? FADE_OUT_REDUCE_MS : FADE_OUT_MS;
-    var fadeIn = reduced ? FADE_IN_REDUCE_MS : FADE_IN_MS;
-
-    stopSlideshow();
-    if (chromeEl) chromeEl.classList.add('is-exiting');
-    if (root) root.classList.add('is-exiting');
+    requestAnimationFrame(function () {
+      curtain.classList.add('is-to-black');
+    });
 
     setTimeout(function () {
+      stopSlideshow();
       removeLandingDom();
       document.documentElement.classList.remove('hl6-landing-active');
-      document.documentElement.classList.add('hl6-lesson-entering');
-    }, fadeOut);
+      curtain.classList.remove('is-to-black');
+      curtain.classList.add('is-from-black');
+      void curtain.offsetWidth;
+      curtain.classList.add('is-revealing');
+    }, toBlack);
 
     setTimeout(function () {
-      finishLessonTransition();
-    }, fadeOut + fadeIn);
+      if (curtain.parentNode) curtain.parentNode.removeChild(curtain);
+      transitionActive = false;
+      if (window.hl6SyncBrandSize) window.hl6SyncBrandSize();
+    }, toBlack + fromBlack);
   }
 
   function updateFullscreenIcon(isFull) {
@@ -356,10 +353,9 @@
   }
 
   function shouldSkipLanding() {
-    try {
-      if (sessionStorage.getItem('hl6-lesson-started') === '1') return true;
-    } catch (e) {}
     if (window.location.hash === '#lesson') return true;
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('lesson') === '1') return true;
     return false;
   }
 
