@@ -21,8 +21,10 @@
     'hl6-landing-line-v2': { x1: 66.666, y1: 0, x2: 66.666, y2: 100 }
   };
   var DOT_IDS = ['hl6-landing-dot-tl', 'hl6-landing-dot-tr', 'hl6-landing-dot-bl', 'hl6-landing-dot-br'];
-  var EXIT_MS = 1100;
-
+  var FADE_OUT_MS = 1650;
+  var FADE_IN_MS = 1400;
+  var FADE_OUT_REDUCE_MS = 380;
+  var FADE_IN_REDUCE_MS = 320;
   var root;
   var chromeEl;
   var slidesEl;
@@ -38,6 +40,7 @@
   var gridLoopActive = false;
   var gridDotsShown = false;
   var destroyed = false;
+  var transitionActive = false;
 
   function rand(min, max) {
     return min + Math.random() * (max - min);
@@ -238,23 +241,56 @@
     activateSlide(order[0]);
   }
 
-  function startLesson() {
-    if (!root) return;
-    stopSlideshow();
-    if (root) root.classList.add('is-exiting');
-    if (chromeEl) chromeEl.classList.add('is-exiting');
-    document.documentElement.classList.remove('hl6-landing-active');
+  function prefersReducedMotion() {
+    try {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (e) {
+      return false;
+    }
+  }
 
-    setTimeout(function () {
-      if (root && root.parentNode) root.parentNode.removeChild(root);
-      if (chromeEl && chromeEl.parentNode) chromeEl.parentNode.removeChild(chromeEl);
-      root = null;
-      chromeEl = null;
-    }, EXIT_MS);
+  function removeLandingDom() {
+    if (root && root.parentNode) root.parentNode.removeChild(root);
+    if (chromeEl && chromeEl.parentNode) chromeEl.parentNode.removeChild(chromeEl);
+    root = null;
+    chromeEl = null;
+  }
+
+  function finishLessonTransition() {
+    document.documentElement.classList.remove('hl6-lesson-entering');
+    transitionActive = false;
+    if (window.hl6SyncBrandSize) window.hl6SyncBrandSize();
+  }
+
+  function startLesson() {
+    if (!root || transitionActive) return;
+    transitionActive = true;
+    if (startBtn) {
+      startBtn.disabled = true;
+      startBtn.setAttribute('aria-busy', 'true');
+    }
 
     try {
       sessionStorage.setItem('hl6-lesson-started', '1');
     } catch (e) {}
+
+    var reduced = prefersReducedMotion();
+    var fadeOut = reduced ? FADE_OUT_REDUCE_MS : FADE_OUT_MS;
+    var fadeIn = reduced ? FADE_IN_REDUCE_MS : FADE_IN_MS;
+
+    stopSlideshow();
+    if (chromeEl) chromeEl.classList.add('is-exiting');
+    if (root) root.classList.add('is-exiting');
+
+    setTimeout(function () {
+      removeLandingDom();
+      document.documentElement.classList.remove('hl6-landing-active');
+      document.documentElement.classList.add('hl6-lesson-entering');
+    }, fadeOut);
+
+    setTimeout(function () {
+      finishLessonTransition();
+    }, fadeOut + fadeIn);
   }
 
   function updateFullscreenIcon(isFull) {
